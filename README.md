@@ -30,6 +30,8 @@ const currentValue: MyStoredType | undefined = myStorageAccessor.get();
 myStorageAccessor.remove();
 ```
 
+## With Default value
+
 Provide a default value to eliminate `undefined` from the `get()` output:
 
 <!-- example-link: src/readme-examples/with-default.example.ts -->
@@ -45,4 +47,24 @@ const myStorageAccessor = createLocalStorageAccessor<MyStoredType>({
 
 // the get value will always be defined due to the default provided above
 const currentValue: MyStoredType = myStorageAccessor.get();
+```
+
+## With sanitizer
+
+Use `setSanitizer` to sanitize values passed to `.set()`:
+
+<!-- example-link: src/readme-examples/with-sanitizer.example.ts -->
+
+```TypeScript
+import {createLocalStorageAccessor} from 'local-storage-vir';
+
+const myStoredNumber = createLocalStorageAccessor<number>({
+    key: 'my-key',
+    setSanitizer: (input) => {
+        // prevent negative values
+        return Math.abs(input);
+    },
+});
+
+myStoredNumber.set(-4); // this will set the value 4
 ```

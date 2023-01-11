@@ -1,11 +1,13 @@
 import {JsonValue, LiteralToPrimitive, Primitive} from 'type-fest';
 
-export type BroadenNonNullableType<OriginalType extends Exclude<JsonValue, null> | undefined> =
+export type ValueBase = Exclude<JsonValue, null>;
+
+export type BroadenNonNullableType<OriginalType extends ValueBase | undefined> =
     NonNullable<OriginalType> extends Primitive
         ? LiteralToPrimitive<NonNullable<OriginalType>>
         : NonNullable<OriginalType>;
 
-export type LocalStorageWrapper<ValueType extends Exclude<JsonValue, null> | undefined> = {
+export type LocalStorageWrapper<ValueType extends ValueBase | undefined> = {
     key: string;
     remove: () => void;
     set: (newValue: BroadenNonNullableType<ValueType>) => void;

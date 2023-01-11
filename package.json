@@ -1,6 +1,6 @@
 {
     "name": "local-storage-vir",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "description": "Simple wrapper for defining local storage key-value pairs.",
     "keywords": [
         "local",

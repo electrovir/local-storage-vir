@@ -19,6 +19,26 @@ describe(createLocalStorageAccessor.name, () => {
 
         assertTypeOf(exampleInstanceWithGeneric.get()).toEqualTypeOf<string | undefined>();
     });
+    it('should have proper types for sanitizer input', () => {
+        createLocalStorageAccessor<string>({
+            key: randomString(),
+            setSanitizer: (input) => {
+                return 'yo';
+            },
+        });
+        createLocalStorageAccessor<string>({
+            key: randomString(),
+            setSanitizer: (input) => {
+                return input;
+            },
+        });
+        createLocalStorageAccessor<string>({
+            key: randomString(),
+            setSanitizer: (input) => {
+                return input.toLowerCase();
+            },
+        });
+    });
     it('should possibly get undefined values when an undefined default value is provided', () => {
         const exampleInstanceWithUndefinedDefault = createLocalStorageAccessor<string>({
             key: randomString(),
@@ -128,5 +148,29 @@ describe(createLocalStorageAccessor.name, () => {
 
         assertTypeOf<ReturnType<typeof myStorageAccessor.get>>().toEqualTypeOf<StoredType>();
         assert.deepStrictEqual(myStorageAccessor.get(), valueToSave);
+    });
+    it('blocks storing undefined values', () => {
+        type StoredType = Record<string, number>;
+        const myStorageAccessor = createLocalStorageAccessor<StoredType>({
+            key: 'my-key',
+            default: {five: 5},
+        });
+
+        // @ts-ignore-error
+        myStorageAccessor.set(undefined);
+    });
+    it('should sanitize values if sanitizer is present', () => {
+        type StoredType = Record<string, number>;
+        const sanitizedOutput = {four: 4};
+        const myStorageAccessor = createLocalStorageAccessor<StoredType>({
+            key: 'my-key',
+            default: {five: 5},
+            setSanitizer: () => {
+                return sanitizedOutput;
+            },
+        });
+
+        myStorageAccessor.set({something: 42});
+        assert.deepStrictEqual(myStorageAccessor.get(), sanitizedOutput);
     });
 });
